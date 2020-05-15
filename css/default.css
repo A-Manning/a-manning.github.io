@@ -15,7 +15,6 @@ body {
     font-weight:300;
     margin: 50px auto 0px auto;
     width: 600px;
-    overflow-y: hidden; /* hide scrollbar */
     padding: 0px 12px;
 }
 
