@@ -108,3 +108,7 @@ p {
     line-height: 20px;
     margin-bottom:20px;
 }
+
+code {
+    color: #0b0;
+}

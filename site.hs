@@ -74,6 +74,12 @@ main = do
                     >>= relativizeUrls
                     >>= cleanIndexUrls
 
+        match "get-out.html" $ do
+            route cleanRoute
+            compile $ getResourceBody
+                >>= loadAndApplyTemplate "templates/default.html" defaultContext
+                >>= relativizeUrls
+                >>= cleanIndexUrls
 
         match "index.html" $ do
             route idRoute
@@ -87,7 +93,7 @@ main = do
                     >>= applyAsTemplate indexCtx
                     >>= loadAndApplyTemplate "templates/default.html" indexCtx
                     >>= relativizeUrls
-                    >>= cleanIndexUrls -- cleanup href in all anchor tags.
+                    >>= cleanIndexUrls
 
         match "templates/*" $ compile templateBodyCompiler
 
