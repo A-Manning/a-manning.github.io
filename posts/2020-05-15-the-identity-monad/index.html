@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Ash Manning's Blog - The Identity Monad</title>
+        <link rel="stylesheet" href="../../css/default.css" />
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <a href="../../">Ash Manning</a>
+            </div>
+            <nav>
+                <a href="../../">Home</a>
+                <a href="../../about">About</a>
+                <a href="../../contact">Contact</a>
+                <a href="../../archive">Archive</a>
+            </nav>
+        </header>
+
+        <main role="main">
+            <!--  <h1>The Identity Monad</h1> -->
+            <article>
+    <section class="header">
+        Posted on May 15, 2020
+        
+    </section>
+    <section>
+        <h1 id="the-identity-monad">The Identity Monad</h1>
+<p>There is an abundance of tutorials and blog posts discussing common monadic structures - lists, options, readers, writers, et cetera. The identity monad, however, is often overlooked. This is a shame, since it’s not only an incredibly simple monad, but also one of the most frequently used!</p>
+<p>The definition of the identity functor is a good starting point; note that we can type <code class="sourceCode haskell"><span class="fu">id</span></code> as <code class="sourceCode haskell">(a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="fu">id</span> a <span class="ot">-&gt;</span> <span class="fu">id</span> b</code>, which means that <code class="sourceCode haskell"><span class="fu">fmap</span></code> is just <code class="sourceCode haskell"><span class="fu">id</span></code> in the identity functor.</p>
+<p>The identity applicative is similarly effortless - we can type <code>id</code> as <code>a -&gt; id a</code> for <code>pure</code>, and then type <code>id</code> as <code>id (a -&gt; b) -&gt; id a -&gt; id b</code> to use as <code>ap</code>.</p>
+<p>The identity monad is only slightly more work - we’ll have to use <code>flip id</code> for <code>bind</code>, giving it the type <code>id a -&gt; (a -&gt; id b) -&gt; id b</code>. Of course, if we were to define the identity monad in terms of flipped <code>bind</code>, we could just use <code>id</code> again.</p>
+<p>It’s trivial to verify that the monad laws are satisfied here. So why doesn’t Haskell have an instance for the identity monad? The issue is that Haskell’s type class system can’t accept instances that aren’t fully applied type constructors. This restriction can’t be avoided, even if <code>id</code> is defined at the type level with <code>-XTypeSynonymInstances</code> and <code>-XFlexibleInstances</code>.</p>
+<p>This is unfortunate, as it leads to some notable duplication. The ubiquitous function application operator <code>$</code> is identical to <code>&lt;$&gt;</code> in the identity monad - as well as <code>&lt;*&gt;</code> and <code>=&lt;&lt;</code>. The Kleisli composition operator <code>&lt;=&lt;</code> from <code>Control.Monad</code>, better known as ‘backwards fish’, is typed as <code>(b -&gt; id c) -&gt; (a -&gt; id b) -&gt; a -&gt; id c</code> in the identity monad - this is equivalent to the function composition operator <code>.</code> and its alias <code>compose</code>. Considering how pervasive <code>$</code> and <code>.</code> are in Haskell, it’s safe to say that the identity monad is one of the most frequently used, despite being incompatible with Haskell’s type classes.</p>
+<p>What a shame then, that an instance cannot be defined in Haskell - if it were possible, then Haskell’s syntax could be cleaned up significantly, unifying <code>$</code> and <code>&lt;$&gt;</code>, as well as <code>.</code> and <code>&lt;=&lt;</code>. Finally, <code>do</code>-notation would remove the need for <code>let..in</code> notation entirely!</p>
+<p>Nevertheless, it is possible to define an instance for the identity monad in languages with more powerful type class/implicit resolution systems. For reference, here is an instance in Coq. I’m using the Std++ “standard library”, because Coq’s default standard library does not define classes for monads.</p>
+<pre class="coq"><code>From stdpp Require Import prelude.
+
+Instance id_fmap: FMap id := fun A B =&gt; id.
+
+Instance id_mret: MRet id := fun A =&gt; id.
+
+Instance id_mbind: MBind id := fun A B =&gt; id.</code></pre>
+    </section>
+</article>
+
+        </main>
+
+        <footer>
+            This site was generated with
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        </footer>
+    </body>
+</html>
