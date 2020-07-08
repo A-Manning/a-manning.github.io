@@ -101,11 +101,11 @@ T(a,\ b) =
 \Theta(m \log(\frac{n}{m}) + m) &amp;\ n &gt; m
 \end{cases}
 \end{aligned}\]</span></p>
-<p>Finally, we can consider that the complexity of <span class="title-ref">append</span> is as for <span class="title-ref">append'</span>, but with an additional <span class="math inline">\(\log m\)</span> to compute <span class="math inline">\(m\)</span>. This doesn’t change the resulting complexity, since both cases contain a term of equal or greater complexity on <span class="math inline">\(m\)</span>.</p>
+<p>Finally, we can consider that the complexity of <span class="title-ref">append</span> is as for <span class="title-ref">append'</span>, but with an additional <span class="math inline">\(\log^2 m\)</span> to compute <span class="math inline">\(m\)</span>.</p>
 <p>Therefore, the complexity of my <span class="title-ref">append</span> algorithm is</p>
 <p><span class="math display">\[\begin{aligned}
 \begin{cases}
-\Theta(\log m + n) &amp;\ m \ge n\\
+\Theta(\log^2 m + n) &amp;\ m \ge n\\
 \Theta(m \log(\frac{n}{m}) + m) &amp;\ n &gt; m
 \end{cases}
 \end{aligned}\]</span></p>
