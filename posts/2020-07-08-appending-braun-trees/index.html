@@ -1,0 +1,122 @@
+<!doctype html>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Ash Manning's Blog - Appending Braun Trees</title>
+        <link rel="stylesheet" href="../../css/default.css" />
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <a href="../../">Ash Manning</a>
+            </div>
+            <nav>
+                <a href="../../">Home</a>
+                <a href="../../about">About</a>
+                <a href="../../contact">Contact</a>
+                <a href="../../archive">Archive</a>
+            </nav>
+        </header>
+
+        <main role="main">
+            <!--  <h1>Appending Braun Trees</h1> -->
+            <article>
+    <section class="header">
+        Posted on July  8, 2020
+        
+    </section>
+    <section>
+        <h1 id="appending-braun-trees">Appending Braun Trees</h1>
+<p><a href="https://users.cs.northwestern.edu/~robby/courses/395-495-2013-fall/three-algorithms-on-braun-trees.pdf">Braun trees</a> are excellent for simulating flexible arrays. Braun trees are a purely functional data structure, supporting <span class="math inline">\(\Theta(n)\)</span> conversions to/from lists, <span class="math inline">\(\Theta(\log n)\)</span> random read/update, and calculating the number of elements in <span class="math inline">\(\Theta(\log^2 n)\)</span>. If the size of a tree is known, then insertion is <span class="math inline">\(\Theta(\log n)\)</span>.</p>
+<p>What about appending Braun trees? For most tree structures, appending trees of sizes <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> will be <span class="math inline">\(\Theta(n\log(m))\)</span>. For arrays, the performance is <span class="math inline">\(\Theta(m+n)\)</span>, and for lists, <span class="math inline">\(\Theta(m)\)</span>. Since Braun trees can be converted to/from lists/arrays in <span class="math inline">\(\Theta(n)\)</span>, there is a trivial algorithm to append Braun trees in <span class="math inline">\(\Theta(m+n)\)</span> by converting the two trees to lists or arrays, appending them, and converting back to a Braun tree.</p>
+<p>It is possible to do better! In this blog post, I will present a new algorithm for appending Braun trees, and derive the asymptotic complexity.</p>
+<p>I’ll start by defining a type to represent a Braun Tree, and proceed to define a few operations that will be useful later.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">data</span> <span class="dt">BraunTree</span> a <span class="ot">=</span> <span class="dt">Leaf</span> <span class="op">|</span> <span class="dt">Node</span> a (<span class="dt">BraunTree</span> a) (<span class="dt">BraunTree</span> a)</span></code></pre></div>
+<h2 id="cons-ing-to-a-braun-tree">Cons-ing to a Braun Tree</h2>
+<p>We can insert an element at the head of a Braun tree (AKA. ‘cons’) with a simple algorithm. Note that when we Cons to a Braun tree, each of the elements in the tree with position <span class="math inline">\(i\)</span> will need to end up in position <span class="math inline">\(i+1\)</span>. In a Braun tree, all of the elements with an odd position relative to the root will be in the left branch.</p>
+<p>The left branch will become the new right branch; the right branch will move to the new left branch, as will the old root. We cons the root to the old right branch to obtain the new left branch.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1"></a><span class="ot">cons ::</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
+<span id="cb2-2"><a href="#cb2-2"></a>cons x <span class="dt">Leaf</span> <span class="ot">=</span> <span class="dt">Node</span> x <span class="dt">Leaf</span> <span class="dt">Leaf</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>cons x (<span class="dt">Node</span> v l r) <span class="ot">=</span> <span class="dt">Node</span> x (cons v r) l</span></code></pre></div>
+<p>This algorithm is quite clearly <span class="math inline">\(\Theta(\log n)\)</span>.</p>
+<h2 id="getting-the-odd--and-even-indexed-elements-of-a-braun-tree">Getting the Odd- and Even-Indexed Elements of a Braun Tree</h2>
+<p>These algorithms are nothing new; they are both components of the algorithm used for <span class="title-ref">cons</span>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1"></a><span class="ot">odds ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
+<span id="cb3-2"><a href="#cb3-2"></a>odds <span class="dt">Leaf</span> <span class="ot">=</span> <span class="fu">undefined</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>odds (<span class="dt">Node</span> _ l _) <span class="ot">=</span> l</span>
+<span id="cb3-4"><a href="#cb3-4"></a></span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="ot">evens ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
+<span id="cb3-6"><a href="#cb3-6"></a>evens <span class="dt">Leaf</span> <span class="ot">=</span> <span class="fu">undefined</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>evens (<span class="dt">Node</span> v _ r) <span class="ot">=</span> cons v r</span></code></pre></div>
+<p>It’s very clear that <span class="title-ref">odds</span> is an <span class="math inline">\(\Theta(1)\)</span> algorithm, whereas <span class="title-ref">evens</span> is <span class="math inline">\(\Theta(\log n)\)</span>.</p>
+<h2 id="appending">Appending</h2>
+<p>Consider the Braun tree that results from appending the Braun trees <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>, of sizes <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> respectively.</p>
+<p>If <span class="math inline">\(m\)</span> is odd, then the even elements of <span class="math inline">\(y\)</span> will be found in the left of the result, and the odd elements of <span class="math inline">\(y\)</span> will be found in the right. If <span class="math inline">\(m\)</span> is even, then the odd elements of <span class="math inline">\(y\)</span> will be found in the left of the result, and the even elements of <span class="math inline">\(y\)</span> will be found in the right.</p>
+<p>In my implementation, I will assume the function</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1"></a><span class="ot">size ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">Int</span></span></code></pre></div>
+<p>as described in Okasaki’s <a href="https://users.cs.northwestern.edu/~robby/courses/395-495-2013-fall/three-algorithms-on-braun-trees.pdf">Three Algorithms on Braun Trees</a>.</p>
+<p>This leads us to the following algorithm:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">-- `append' m x y` appends `y` to the tree `x` that is known to be of size `m`.</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="ot">append' ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
+<span id="cb5-3"><a href="#cb5-3"></a>append' <span class="dv">0</span> <span class="dt">Leaf</span> y <span class="ot">=</span> y</span>
+<span id="cb5-4"><a href="#cb5-4"></a>appemd' <span class="dv">0</span> _ _ <span class="ot">=</span> <span class="fu">undefined</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>append' _ <span class="dt">Leaf</span> _ <span class="ot">=</span> <span class="fu">undefined</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>append' _ x <span class="dt">Leaf</span> <span class="ot">=</span> x</span>
+<span id="cb5-7"><a href="#cb5-7"></a>append' m (<span class="dt">Node</span> v l r) y <span class="ot">=</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a>  <span class="kw">if</span> m <span class="ot">`mod`</span> <span class="dv">2</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">then</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>    <span class="dt">Node</span> v <span class="op">$</span> append' (m <span class="ot">`div`</span> <span class="dv">2</span>) l (odds y) <span class="op">$</span> append' ((m<span class="op">-</span><span class="dv">1</span>) <span class="ot">`div`</span> <span class="dv">2</span>) r (evens y)</span>
+<span id="cb5-10"><a href="#cb5-10"></a>  <span class="kw">else</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>    <span class="dt">Node</span> v <span class="op">$</span> append' (m <span class="ot">`div`</span> <span class="dv">2</span>) l (evens y) <span class="op">$</span> append' (m <span class="ot">`div`</span> <span class="dv">2</span>) r (odds y)</span>
+<span id="cb5-12"><a href="#cb5-12"></a></span>
+<span id="cb5-13"><a href="#cb5-13"></a><span class="ot">append ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
+<span id="cb5-14"><a href="#cb5-14"></a>append x <span class="ot">=</span> append' (size x) x</span></code></pre></div>
+<h2 id="algorithmic-complexity-of-append">Algorithmic Complexity of <span class="title-ref">append</span></h2>
+<p>To make this a bit easier to reason about, we will assume that <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> are of the forms <span class="math inline">\(2^a\)</span> and <span class="math inline">\(2^b\)</span> respectively.</p>
+<p>We can represent the recurrence equation for the complexity of <span class="title-ref">append'</span>, <span class="math inline">\(T'(a, b)\)</span> as</p>
+<p><span class="math display">\[\begin{aligned}
+\begin{align*}
+  &amp;T(0,\ \_) =&amp; &amp;1 \\
+  &amp;T(a,\ 0) =&amp; &amp;1 \\
+  &amp;T(a,\ 1) =&amp; &amp;a \\
+  &amp;T(a,\ b) =&amp; &amp;2T(a-1,\ b-1) + a
+\end{align*}
+\end{aligned}\]</span></p>
+<p>Let <span class="math inline">\(c := min(a,\ b)\)</span>, then we have that <span class="math inline">\(T(a,\ b) = 2^c (b+2-c) - (b+2)\)</span>.</p>
+<p>We can expand <span class="math inline">\(c\)</span> to write this as</p>
+<p><span class="math display">\[\begin{aligned}
+T(a,\ b) =
+\begin{cases}
+2^{b+1} - 2(b + 1) + a &amp;\ a \ge b\\
+(b+2)(2^a-1) - a2^a &amp;\ b \ge a
+\end{cases}
+\end{aligned}\]</span></p>
+<p>We can thereby conclude that the complexity of <span class="title-ref">append'</span> is as follows:</p>
+<p><span class="math display">\[\begin{aligned}
+\begin{cases}
+\Theta(\log m + n) &amp;\ m \ge n\\
+\Theta(m \log(\frac{n}{m}) + m) &amp;\ n &gt; m
+\end{cases}
+\end{aligned}\]</span></p>
+<p>Finally, we can consider that the complexity of <span class="title-ref">append</span> is as for <span class="title-ref">append'</span>, but with an additional <span class="math inline">\(\log m\)</span> to compute <span class="math inline">\(m\)</span>. This doesn’t change the resulting complexity, since both cases contain a term of equal or greater complexity on <span class="math inline">\(m\)</span>.</p>
+<p>Therefore, the complexity of my <span class="title-ref">append</span> algorithm is</p>
+<p><span class="math display">\[\begin{aligned}
+\begin{cases}
+\Theta(\log m + n) &amp;\ m \ge n\\
+\Theta(m \log(\frac{n}{m}) + m) &amp;\ n &gt; m
+\end{cases}
+\end{aligned}\]</span></p>
+<p>which is superior to the trivial <span class="math inline">\(\Theta(m + n)\)</span> algorithm based on conversion to/from lists/arrays.</p>
+    </section>
+</article>
+
+        </main>
+
+        <footer>
+            This site was generated with
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        </footer>
+    </body>
+</html>
