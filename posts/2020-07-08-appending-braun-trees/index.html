@@ -46,11 +46,11 @@
 <h2 id="getting-the-odd--and-even-indexed-elements-of-a-braun-tree">Getting the Odd- and Even-Indexed Elements of a Braun Tree</h2>
 <p>These algorithms are nothing new; they are both components of the algorithm used for <span class="title-ref">cons</span>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1"></a><span class="ot">odds ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
-<span id="cb3-2"><a href="#cb3-2"></a>odds <span class="dt">Leaf</span> <span class="ot">=</span> <span class="fu">undefined</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>odds <span class="dt">Leaf</span> <span class="ot">=</span> <span class="dt">Leaf</span></span>
 <span id="cb3-3"><a href="#cb3-3"></a>odds (<span class="dt">Node</span> _ l _) <span class="ot">=</span> l</span>
 <span id="cb3-4"><a href="#cb3-4"></a></span>
 <span id="cb3-5"><a href="#cb3-5"></a><span class="ot">evens ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
-<span id="cb3-6"><a href="#cb3-6"></a>evens <span class="dt">Leaf</span> <span class="ot">=</span> <span class="fu">undefined</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>evens <span class="dt">Leaf</span> <span class="ot">=</span> <span class="dt">Leaf</span></span>
 <span id="cb3-7"><a href="#cb3-7"></a>evens (<span class="dt">Node</span> v _ r) <span class="ot">=</span> cons v r</span></code></pre></div>
 <p>It’s very clear that <span class="title-ref">odds</span> is an <span class="math inline">\(\Theta(1)\)</span> algorithm, whereas <span class="title-ref">evens</span> is <span class="math inline">\(\Theta(\log n)\)</span>.</p>
 <h2 id="appending">Appending</h2>
