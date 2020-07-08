@@ -3,6 +3,7 @@
 import           Data.List (isSuffixOf)
 import           Data.Monoid (mappend)
 import           System.FilePath ((</>), takeDirectory, takeBaseName)
+import           Text.Pandoc.Options
 import           Hakyll
 
 --------------------------------------------------------------------------------
@@ -24,11 +25,22 @@ cleanIndexUrls = return . fmap (withUrls cleanIndex)
 cleanIndexHtmls :: Item String -> Compiler (Item String)
 cleanIndexHtmls = return . fmap (replaceAll "/index.html" (const "/"))
 
-
 configuration :: IO Configuration
 configuration = do
     dc <- readFile "deployCommand.sh"
     return $ defaultConfiguration {deployCommand=dc}
+
+pandocMathCompiler =
+    let mathExtensions = [ Ext_tex_math_dollars,
+                           Ext_tex_math_double_backslash,
+                           Ext_latex_macros ]
+        defaultExtensions = writerExtensions defaultHakyllWriterOptions
+        newExtensions = foldr enableExtension defaultExtensions mathExtensions
+        writerOptions = defaultHakyllWriterOptions {
+                          writerExtensions = newExtensions,
+                          writerHTMLMathMethod = MathJax ""
+                        }
+    in pandocCompilerWith defaultHakyllReaderOptions writerOptions
 
 main :: IO ()
 main = do
@@ -48,13 +60,13 @@ main = do
 
         match (fromList ["about.rst", "contact.markdown"]) $ do
             route   cleanRoute
-            compile $ pandocCompiler
+            compile $ pandocMathCompiler
                 >>= loadAndApplyTemplate "templates/default.html" defaultContext
                 >>= relativizeUrls
 
         match "posts/*" $ do
             route $ cleanRoute
-            compile $ pandocCompiler
+            compile $ pandocMathCompiler
                 >>= loadAndApplyTemplate "templates/post.html"    postCtx
                 >>= loadAndApplyTemplate "templates/default.html" postCtx
                 >>= relativizeUrls
