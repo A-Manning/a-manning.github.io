@@ -210,55 +210,60 @@
 <div class="sourceCode" id="cb16"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">data</span> <span class="dt">EitherBothNothing</span> a b <span class="ot">=</span> <span class="dt">B</span> a b <span class="op">|</span> <span class="dt">L</span> a <span class="op">|</span> <span class="dt">R</span> b <span class="op">|</span> <span class="dt">N</span></span>
 <span id="cb16-2"><a href="#cb16-2"></a></span>
 <span id="cb16-3"><a href="#cb16-3"></a><span class="kw">instance</span> <span class="dt">Bifunctor</span> <span class="dt">EitherBothNothing</span> <span class="kw">where</span></span>
-<span id="cb16-4"><a href="#cb16-4"></a>  bimap f g <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb16-5"><a href="#cb16-5"></a>    <span class="dt">B</span> x y <span class="ot">-&gt;</span> <span class="dt">B</span> (f x) (g y)</span>
-<span id="cb16-6"><a href="#cb16-6"></a>    <span class="dt">L</span> x <span class="ot">-&gt;</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-7"><a href="#cb16-7"></a>    <span class="dt">R</span> y <span class="ot">-&gt;</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-8"><a href="#cb16-8"></a>    <span class="dt">N</span> <span class="ot">-&gt;</span> <span class="dt">N</span></span>
-<span id="cb16-9"><a href="#cb16-9"></a></span>
-<span id="cb16-10"><a href="#cb16-10"></a><span class="kw">instance</span> <span class="dt">Biapplicative</span> <span class="dt">EitherBothNothing</span> <span class="kw">where</span></span>
-<span id="cb16-11"><a href="#cb16-11"></a>  applyL (<span class="dt">B</span> f g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) (g y)</span>
-<span id="cb16-12"><a href="#cb16-12"></a>  applyL (<span class="dt">B</span> f _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-13"><a href="#cb16-13"></a>  applyL (<span class="dt">B</span> _ g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-14"><a href="#cb16-14"></a>  applyL (<span class="dt">L</span> f) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) y</span>
-<span id="cb16-15"><a href="#cb16-15"></a>  applyL (<span class="dt">L</span> f) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-16"><a href="#cb16-16"></a>  applyL (<span class="dt">L</span> _) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> y</span>
-<span id="cb16-17"><a href="#cb16-17"></a>  applyL (<span class="dt">R</span> g) (<span class="dt">B</span> _ y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-18"><a href="#cb16-18"></a>  applyL (<span class="dt">R</span> _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-19"><a href="#cb16-19"></a>  applyL (<span class="dt">R</span> g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-20"><a href="#cb16-20"></a>  applyL <span class="dt">N</span> _ <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-21"><a href="#cb16-21"></a>  applyL _ <span class="dt">N</span> <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-22"><a href="#cb16-22"></a></span>
-<span id="cb16-23"><a href="#cb16-23"></a>  applyR (<span class="dt">B</span> f g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) (g y)</span>
-<span id="cb16-24"><a href="#cb16-24"></a>  applyR (<span class="dt">B</span> f _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-25"><a href="#cb16-25"></a>  applyR (<span class="dt">B</span> _ g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-26"><a href="#cb16-26"></a>  applyR (<span class="dt">L</span> f) (<span class="dt">B</span> x _) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-27"><a href="#cb16-27"></a>  applyR (<span class="dt">L</span> f) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-28"><a href="#cb16-28"></a>  applyR (<span class="dt">L</span> _) (<span class="dt">R</span> _) <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-29"><a href="#cb16-29"></a>  applyR (<span class="dt">R</span> g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> x (g y)</span>
-<span id="cb16-30"><a href="#cb16-30"></a>  applyR (<span class="dt">R</span> _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> x</span>
-<span id="cb16-31"><a href="#cb16-31"></a>  applyR (<span class="dt">R</span> g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-32"><a href="#cb16-32"></a>  applyR <span class="dt">N</span> _ <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-33"><a href="#cb16-33"></a>  applyR _ <span class="dt">N</span> <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-34"><a href="#cb16-34"></a></span>
-<span id="cb16-35"><a href="#cb16-35"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">B</span> f g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) (g y)</span>
-<span id="cb16-36"><a href="#cb16-36"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">B</span> f _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-37"><a href="#cb16-37"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">B</span> _ g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-38"><a href="#cb16-38"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">L</span> f) (<span class="dt">B</span> x _) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-39"><a href="#cb16-39"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">L</span> f) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
-<span id="cb16-40"><a href="#cb16-40"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">L</span> _) (<span class="dt">R</span> _) <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-41"><a href="#cb16-41"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">R</span> g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-42"><a href="#cb16-42"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">R</span> _) (<span class="dt">L</span> _) <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-43"><a href="#cb16-43"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">R</span> g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
-<span id="cb16-44"><a href="#cb16-44"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) <span class="dt">N</span> _ <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-45"><a href="#cb16-45"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) _ <span class="dt">N</span> <span class="ot">=</span> <span class="dt">N</span></span>
-<span id="cb16-46"><a href="#cb16-46"></a></span>
-<span id="cb16-47"><a href="#cb16-47"></a><span class="kw">instance</span> <span class="dt">Biapplicative1</span> <span class="dt">EitherBothNothing</span> <span class="kw">where</span></span>
-<span id="cb16-48"><a href="#cb16-48"></a>  bipure <span class="ot">=</span> <span class="dt">B</span></span>
-<span id="cb16-49"><a href="#cb16-49"></a></span>
-<span id="cb16-50"><a href="#cb16-50"></a><span class="kw">instance</span> <span class="dt">Biapplicative2</span> <span class="dt">EitherBothNothing</span> <span class="kw">where</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a></span>
+<span id="cb16-5"><a href="#cb16-5"></a>  bimap f g <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>    <span class="dt">B</span> x y <span class="ot">-&gt;</span> <span class="dt">B</span> (f x) (g y)</span>
+<span id="cb16-7"><a href="#cb16-7"></a>    <span class="dt">L</span> x <span class="ot">-&gt;</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-8"><a href="#cb16-8"></a>    <span class="dt">R</span> y <span class="ot">-&gt;</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-9"><a href="#cb16-9"></a>    <span class="dt">N</span> <span class="ot">-&gt;</span> <span class="dt">N</span></span>
+<span id="cb16-10"><a href="#cb16-10"></a></span>
+<span id="cb16-11"><a href="#cb16-11"></a><span class="kw">instance</span> <span class="dt">Biapplicative</span> <span class="dt">EitherBothNothing</span> <span class="kw">where</span></span>
+<span id="cb16-12"><a href="#cb16-12"></a></span>
+<span id="cb16-13"><a href="#cb16-13"></a>  applyL (<span class="dt">B</span> f g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) (g y)</span>
+<span id="cb16-14"><a href="#cb16-14"></a>  applyL (<span class="dt">B</span> f _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-15"><a href="#cb16-15"></a>  applyL (<span class="dt">B</span> _ g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-16"><a href="#cb16-16"></a>  applyL (<span class="dt">L</span> f) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) y</span>
+<span id="cb16-17"><a href="#cb16-17"></a>  applyL (<span class="dt">L</span> f) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-18"><a href="#cb16-18"></a>  applyL (<span class="dt">L</span> _) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> y</span>
+<span id="cb16-19"><a href="#cb16-19"></a>  applyL (<span class="dt">R</span> g) (<span class="dt">B</span> _ y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-20"><a href="#cb16-20"></a>  applyL (<span class="dt">R</span> _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-21"><a href="#cb16-21"></a>  applyL (<span class="dt">R</span> g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-22"><a href="#cb16-22"></a>  applyL <span class="dt">N</span> _ <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-23"><a href="#cb16-23"></a>  applyL _ <span class="dt">N</span> <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-24"><a href="#cb16-24"></a></span>
+<span id="cb16-25"><a href="#cb16-25"></a>  applyR (<span class="dt">B</span> f g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) (g y)</span>
+<span id="cb16-26"><a href="#cb16-26"></a>  applyR (<span class="dt">B</span> f _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-27"><a href="#cb16-27"></a>  applyR (<span class="dt">B</span> _ g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-28"><a href="#cb16-28"></a>  applyR (<span class="dt">L</span> f) (<span class="dt">B</span> x _) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-29"><a href="#cb16-29"></a>  applyR (<span class="dt">L</span> f) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-30"><a href="#cb16-30"></a>  applyR (<span class="dt">L</span> _) (<span class="dt">R</span> _) <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-31"><a href="#cb16-31"></a>  applyR (<span class="dt">R</span> g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> x (g y)</span>
+<span id="cb16-32"><a href="#cb16-32"></a>  applyR (<span class="dt">R</span> _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> x</span>
+<span id="cb16-33"><a href="#cb16-33"></a>  applyR (<span class="dt">R</span> g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-34"><a href="#cb16-34"></a>  applyR <span class="dt">N</span> _ <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-35"><a href="#cb16-35"></a>  applyR _ <span class="dt">N</span> <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-36"><a href="#cb16-36"></a></span>
+<span id="cb16-37"><a href="#cb16-37"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">B</span> f g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">B</span> (f x) (g y)</span>
+<span id="cb16-38"><a href="#cb16-38"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">B</span> f _) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-39"><a href="#cb16-39"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">B</span> _ g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-40"><a href="#cb16-40"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">L</span> f) (<span class="dt">B</span> x _) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-41"><a href="#cb16-41"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">L</span> f) (<span class="dt">L</span> x) <span class="ot">=</span> <span class="dt">L</span> (f x)</span>
+<span id="cb16-42"><a href="#cb16-42"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">L</span> _) (<span class="dt">R</span> _) <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-43"><a href="#cb16-43"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">R</span> g) (<span class="dt">B</span> x y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-44"><a href="#cb16-44"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">R</span> _) (<span class="dt">L</span> _) <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-45"><a href="#cb16-45"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">R</span> g) (<span class="dt">R</span> y) <span class="ot">=</span> <span class="dt">R</span> (g y)</span>
+<span id="cb16-46"><a href="#cb16-46"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) <span class="dt">N</span> _ <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-47"><a href="#cb16-47"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) _ <span class="dt">N</span> <span class="ot">=</span> <span class="dt">N</span></span>
+<span id="cb16-48"><a href="#cb16-48"></a></span>
+<span id="cb16-49"><a href="#cb16-49"></a><span class="kw">instance</span> <span class="dt">Biapplicative1</span> <span class="dt">EitherBothNothing</span> <span class="kw">where</span></span>
+<span id="cb16-50"><a href="#cb16-50"></a></span>
 <span id="cb16-51"><a href="#cb16-51"></a>  pureL <span class="ot">=</span> <span class="dt">L</span></span>
-<span id="cb16-52"><a href="#cb16-52"></a>  pureR <span class="ot">=</span> <span class="dt">R</span></span></code></pre></div>
+<span id="cb16-52"><a href="#cb16-52"></a></span>
+<span id="cb16-53"><a href="#cb16-53"></a>  pureR <span class="ot">=</span> <span class="dt">R</span></span>
+<span id="cb16-54"><a href="#cb16-54"></a></span>
+<span id="cb16-55"><a href="#cb16-55"></a><span class="kw">instance</span> <span class="dt">Biapplicative2</span> <span class="dt">EitherBothNothing</span> <span class="kw">where</span></span>
+<span id="cb16-56"><a href="#cb16-56"></a></span>
+<span id="cb16-57"><a href="#cb16-57"></a>  bipure <span class="ot">=</span> <span class="dt">B</span></span></code></pre></div>
     </section>
 </article>
 
