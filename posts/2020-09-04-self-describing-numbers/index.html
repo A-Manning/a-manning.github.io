@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Ash Manning's Blog - Self-describing Numbers</title>
+        <link rel="stylesheet" href="../../css/default.css" />
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <a href="../../">Ash Manning</a>
+            </div>
+            <nav>
+                <a href="../../">Home</a>
+                <a href="../../about">About</a>
+                <a href="../../contact">Contact</a>
+                <a href="../../archive">Archive</a>
+            </nav>
+        </header>
+
+        <main role="main">
+            <!--  <h1>Self-describing Numbers</h1> -->
+            <article>
+    <section class="header">
+        Posted on September  4, 2020
+        
+    </section>
+    <section>
+        <h1 id="self-describing-numbers">Self-describing Numbers</h1>
+<h2 id="introduction">Introduction</h2>
+<p>The number <span class="math inline">\(23172132\)</span> has an interesting property; when represented in base <span class="math inline">\(10\)</span>, it ‘describes’ it’s own digits. Reading left-to-right, there are</p>
+<ul>
+<li>two threes</li>
+<li>one seven</li>
+<li>two ones</li>
+<li>three twos</li>
+</ul>
+<p>within the digits of <span class="math inline">\(23172132\)</span> (in base <span class="math inline">\(10\)</span>).</p>
+<p>Other such examples in base <span class="math inline">\(10\)</span> include <span class="math inline">\(22\)</span> (containing two twos), <span class="math inline">\(4444\)</span> (containing four fours), and <span class="math inline">\(21212442\)</span> (containing two ones, two fours, and four twos).</p>
+<p>Informally, <span class="math inline">\(x\)</span> is a self-describing number (in base <span class="math inline">\(b\)</span>) iff</p>
+<ul>
+<li>There is some <span class="math inline">\(k \in \mathbb{N}\)</span>, such that <span class="math inline">\(x\)</span> has <span class="math inline">\(2 k\)</span> digits</li>
+<li><span class="math inline">\(\forall\ i &lt; k \in \mathbb{N}\)</span>, the <span class="math inline">\(2i\)</span>-th digit is the multiplicity of the <span class="math inline">\(2i+1\)</span>-th digit</li>
+<li>If the digit <span class="math inline">\(d\)</span> appears in <span class="math inline">\(x\)</span>, then <span class="math inline">\(\exists\ i &lt; k \in \mathbb{N}\)</span> such that the <span class="math inline">\(2i+1\)</span>-th digit is <span class="math inline">\(d\)</span></li>
+</ul>
+<p>where digits are indexed left-to-right, counting from <span class="math inline">\(0\)</span>.</p>
+<p>In a series of blog posts, I will state and possibly prove various properties about the self-describing numbers, and discuss how we can find self-describing numbers.</p>
+<h2 id="formal-definition">Formal Definition</h2>
+<p>With a little number theory, we can give a more rigorous definition of the self-describing numbers. The following observations will be helpful:</p>
+<ul>
+<li><p>A number <span class="math inline">\(x\)</span> in base <span class="math inline">\(b\)</span> has <span class="math inline">\(\lfloor \log_b x \rfloor + 1\)</span> digits. Here we extend <span class="math inline">\(\log_b\)</span> such that <span class="math inline">\(\lfloor \log_b 0 \rfloor = 0\)</span>.</p></li>
+<li><p>The <span class="math inline">\(i\)</span>-th digit of <span class="math inline">\(x\)</span>, <strong>counting from the right</strong>, expressed as <span class="math inline">\(d_i(x)\)</span>, can be calculated using the formula</p>
+<p><span class="math display">\[d_i(x) = \frac{x \mod b^{i+1} - x \mod b^i}{b^i}\]</span></p></li>
+</ul>
+<p>We can now define the multiplicity of the digit <span class="math inline">\(\delta\)</span> in <span class="math inline">\(x\)</span>, which we can denote as <span class="math inline">\(m(\delta,\ x)\)</span>, such that</p>
+<p><span class="math display">\[m(\delta,\ x) =
+\sum^{\lfloor \log_b x \rfloor}_{i=0} [d_i(x) = \delta]\]</span></p>
+<p>where the square brackets are <a href="https://en.wikipedia.org/wiki/Iverson_bracket">Iverson brackets</a>.</p>
+<p>Finally, we can precisely define the self-describing numbers.</p>
+<p><span class="math inline">\(x \in \mathbb{N}\)</span> is said to be <em>self-describing</em> in base <span class="math inline">\(b\)</span> iff</p>
+<ul>
+<li><span class="math inline">\(\lfloor \log_b x \rfloor \mod 2 = 1\)</span></li>
+<li><span class="math inline">\(\forall\ i,\ m(d_{2i}(x),\ x) = d_{2i+1}(x)\)</span></li>
+<li><span class="math inline">\(\forall\ j,\ \exists\ i.\ d_j(x) = d_{2i}(x)\)</span></li>
+</ul>
+<p>The reader may wish to verify these conditions hold for the aforementioned exemplary self-describing numbers.</p>
+<p>I’ll also define a subset, which I call the <em>non-repeating</em> self-describing numbers. If <span class="math inline">\(x\)</span> is self-describing in base <span class="math inline">\(b\)</span>, then it is non-repeating iff</p>
+<ul>
+<li><span class="math inline">\(\forall\ i\ j.\ d_{2i}(x) = d_{2j}(x) \Longleftrightarrow i = j\)</span>.</li>
+</ul>
+<p>The numbers <span class="math inline">\(23172132\)</span> and <span class="math inline">\(22\)</span> are both non-repeating self-describing numbers in base <span class="math inline">\(10\)</span>, but <span class="math inline">\(4444\)</span> and <span class="math inline">\(21212442\)</span> are only self-describing.</p>
+<h2 id="alternative-representations">Alternative Representations</h2>
+<p>When working with the self-describing numbers, it is often advantageous to make use of an alternative representation.</p>
+<p>Because the self-describing numbers always have an even number of digits, we can express them as n-tuples of pairs, where</p>
+<p><span class="math display">\[\begin{aligned}
+\begin{align*}
+&amp;encode : \mathbb{N} \longrightarrow (\mathbb{N} \times \mathbb{N})^* \\
+&amp;encode(x)_i = (d_{2i+1},\ d_{2i}) \\
+\\
+&amp;decode : (\mathbb{N} \times \mathbb{N})^* \longrightarrow \mathbb{N} \\
+&amp;decode(x) = \sum^{(length\ x) - 1}_{i=0} b^{2i}\ (b\ (x_i)_0 + (x_i)_1)
+\end{align*}
+\end{aligned}\]</span></p>
+<p>In this form, we would represent the base <span class="math inline">\(10\)</span> number <span class="math inline">\(23172132\)</span> as <span class="math inline">\([(3,\ 2),\ (2,\ 1),\ (1,\ 7),\ (2,\ 3)]\)</span>.</p>
+<p>This representation is useful because it allows us to conveniently express certain theorems regarding the self-describing numbers.</p>
+<h2 id="basic-theorems">Basic theorems</h2>
+<p>An important theorem is that if <span class="math inline">\(x\)</span> encodes a self-describing number, then any permutation of the pairs in <span class="math inline">\(x\)</span> also encode a self-describing number.</p>
+<p>For example, since we know that <span class="math inline">\(23172132\)</span> is self-describing in base <span class="math inline">\(10\)</span>, all of the permutations of it’s encoding also encode self-describing numbers:</p>
+<ul>
+<li><span class="math inline">\([(2,\ 1),\ (3,\ 2),\ (2,\ 3),\ (1,\ 7)]\)</span></li>
+<li><span class="math inline">\([(2,\ 1),\ (3,\ 2),\ (1,\ 7),\ (2,\ 3)]\)</span></li>
+<li><span class="math inline">\([(2,\ 1),\ (2,\ 3),\ (3,\ 2),\ (1,\ 7)]\)</span></li>
+<li><span class="math inline">\([(2,\ 1),\ (2,\ 3),\ (1,\ 7),\ (3,\ 2)]\)</span></li>
+<li><span class="math inline">\([(2,\ 1),\ (1,\ 7),\ (3,\ 2),\ (2,\ 3)]\)</span></li>
+<li><span class="math inline">\([(2,\ 1),\ (1,\ 7),\ (2,\ 3),\ (3,\ 2)]\)</span></li>
+<li><span class="math inline">\([(3,\ 2),\ (2,\ 1),\ (2,\ 3),\ (1,\ 7)]\)</span></li>
+<li><span class="math inline">\([(3,\ 2),\ (2,\ 3),\ (2,\ 1),\ (1,\ 7)]\)</span></li>
+<li><span class="math inline">\([(3,\ 2),\ (2,\ 3),\ (1,\ 7),\ (2,\ 1)]\)</span></li>
+<li><span class="math inline">\([(3,\ 2),\ (1,\ 7),\ (2,\ 1),\ (2,\ 3)]\)</span></li>
+<li><span class="math inline">\([(3,\ 2),\ (1,\ 7),\ (2,\ 3),\ (2,\ 1)]\)</span></li>
+<li><span class="math inline">\([(2,\ 3),\ (2,\ 1),\ (3,\ 2),\ (1,\ 7)]\)</span></li>
+<li><span class="math inline">\([(2,\ 3),\ (2,\ 1),\ (1,\ 7),\ (3,\ 2)]\)</span></li>
+<li><span class="math inline">\([(2,\ 3),\ (3,\ 2),\ (2,\ 1),\ (1,\ 7)]\)</span></li>
+<li><span class="math inline">\([(2,\ 3),\ (3,\ 2),\ (1,\ 7),\ (2,\ 1)]\)</span></li>
+<li><span class="math inline">\([(2,\ 3),\ (1,\ 7),\ (2,\ 1),\ (3,\ 2)]\)</span></li>
+<li><span class="math inline">\([(2,\ 3),\ (1,\ 7),\ (3,\ 2),\ (2,\ 1)]\)</span></li>
+<li><span class="math inline">\([(1,\ 7),\ (2,\ 1),\ (3,\ 2),\ (2,\ 3)]\)</span></li>
+<li><span class="math inline">\([(1,\ 7),\ (2,\ 1),\ (2,\ 3),\ (3,\ 2)]\)</span></li>
+<li><span class="math inline">\([(1,\ 7),\ (3,\ 2),\ (2,\ 1),\ (2,\ 3)]\)</span></li>
+<li><span class="math inline">\([(1,\ 7),\ (3,\ 2),\ (2,\ 3),\ (2,\ 1)]\)</span></li>
+<li><span class="math inline">\([(1,\ 7),\ (2,\ 3),\ (2,\ 1),\ (3,\ 2)]\)</span></li>
+<li><span class="math inline">\([(1,\ 7),\ (2,\ 3),\ (3,\ 2),\ (2,\ 1)]\)</span></li>
+</ul>
+<p>A second useful theorem is stated below:</p>
+<p><span class="math display">\[\sum^{(length\ x) - 1}_{i=0} (x_i)_0\
+[\forall\ j &lt; i.\ (x_i)_1 \neq (x_j)_1 ]
+= 2\ (length\ x)\]</span></p>
+<p>In other words, the sum of left elements of pairs is equal to twice the number of pairs, where repeated pairs are only counted once.</p>
+<p>With these two theorems in hand, one might attempt to prove that</p>
+<ul>
+<li><span class="math inline">\(22\)</span> is the only number that is non-repeating self-describing in base <span class="math inline">\(10\)</span> when read left-to-right and right-to-left.</li>
+<li>If a number is self-describing in base <span class="math inline">\(10\)</span> when read left-to-right and right-to-left, then it contains only a single digit. Examples are <span class="math inline">\(22\)</span>, <span class="math inline">\(4444\)</span>, and <span class="math inline">\(88888888\)</span>.</li>
+</ul>
+<p>The reader is welcome to contact me via email for help with these proofs.</p>
+<p>In the next blog post in this series, I’ll discuss an algorithm to find all non-repeating self-describing numbers.</p>
+    </section>
+</article>
+
+        </main>
+
+        <footer>
+            This site was generated with
+            <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+        </footer>
+    </body>
+</html>
