@@ -86,13 +86,6 @@ main = do
                     >>= relativizeUrls
                     >>= cleanIndexUrls
 
-        match "get-out.html" $ do
-            route cleanRoute
-            compile $ getResourceBody
-                >>= loadAndApplyTemplate "templates/default.html" defaultContext
-                >>= relativizeUrls
-                >>= cleanIndexUrls
-
         match "index.html" $ do
             route idRoute
             compile $ do
