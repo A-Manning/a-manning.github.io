@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Ash Manning's Blog - Appending Braun Trees</title>
         <link rel="stylesheet" href="../../css/default.css" />
+        <link rel="stylesheet" href="../../css/syntax.css" />
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
     </head>
@@ -44,7 +45,7 @@
 <span id="cb2-3"><a href="#cb2-3"></a>cons x (<span class="dt">Node</span> v l r) <span class="ot">=</span> <span class="dt">Node</span> x (cons v r) l</span></code></pre></div>
 <p>This algorithm is quite clearly <span class="math inline">\(\Theta(\log n)\)</span>.</p>
 <h2 id="getting-the-odd--and-even-indexed-elements-of-a-braun-tree">Getting the Odd- and Even-Indexed Elements of a Braun Tree</h2>
-<p>These algorithms are nothing new; they are both components of the algorithm used for <span class="title-ref">cons</span>.</p>
+<p>These algorithms are nothing new; they are both components of the algorithm used for <code class="sourceCode haskell">cons</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1"></a><span class="ot">odds ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
 <span id="cb3-2"><a href="#cb3-2"></a>odds <span class="dt">Leaf</span> <span class="ot">=</span> <span class="dt">Leaf</span></span>
 <span id="cb3-3"><a href="#cb3-3"></a>odds (<span class="dt">Node</span> _ l _) <span class="ot">=</span> l</span>
@@ -74,9 +75,9 @@
 <span id="cb5-12"><a href="#cb5-12"></a></span>
 <span id="cb5-13"><a href="#cb5-13"></a><span class="ot">append ::</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a <span class="ot">-&gt;</span> <span class="dt">BraunTree</span> a</span>
 <span id="cb5-14"><a href="#cb5-14"></a>append x <span class="ot">=</span> append' (size x) x</span></code></pre></div>
-<h2 id="algorithmic-complexity-of-append">Algorithmic Complexity of <span class="title-ref">append</span></h2>
+<p>———————————-Algorithmic Complexity of <code class="sourceCode haskell">append</code> ———————————-</p>
 <p>To make this a bit easier to reason about, we will assume that <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> are of the forms <span class="math inline">\(2^a\)</span> and <span class="math inline">\(2^b\)</span> respectively.</p>
-<p>We can represent the recurrence equation for the complexity of <span class="title-ref">append'</span>, <span class="math inline">\(T'(a, b)\)</span> as</p>
+<p>We can represent the recurrence equation for the complexity of <code class="sourceCode haskell">append'</code>, <span class="math inline">\(T'(a, b)\)</span> as</p>
 <p><span class="math display">\[\begin{aligned}
 \begin{align*}
   &amp;T(0,\ \_) =&amp; &amp;1 \\
@@ -94,15 +95,15 @@ T(a,\ b) =
 (b+2)(2^a-1) - a2^a &amp;\ b \ge a
 \end{cases}
 \end{aligned}\]</span></p>
-<p>We can thereby conclude that the complexity of <span class="title-ref">append'</span> is as follows:</p>
+<p>We can thereby conclude that the complexity of <code class="sourceCode haskell">append'</code> is as follows:</p>
 <p><span class="math display">\[\begin{aligned}
 \begin{cases}
 \Theta(\log m + n) &amp;\ m \ge n\\
 \Theta(m \log(\frac{n}{m}) + m) &amp;\ n &gt; m
 \end{cases}
 \end{aligned}\]</span></p>
-<p>Finally, we can consider that the complexity of <span class="title-ref">append</span> is as for <span class="title-ref">append'</span>, but with an additional <span class="math inline">\(\log^2 m\)</span> to compute <span class="math inline">\(m\)</span>.</p>
-<p>Therefore, the complexity of my <span class="title-ref">append</span> algorithm is</p>
+<p>Finally, we can consider that the complexity of <code class="sourceCode haskell">append</code> is as for <code class="sourceCode haskell">append'</code>, but with an additional <span class="math inline">\(\log^2 m\)</span> to compute <span class="math inline">\(m\)</span>.</p>
+<p>Therefore, the complexity of my <code class="sourceCode haskell">append</code> algorithm is</p>
 <p><span class="math display">\[\begin{aligned}
 \begin{cases}
 \Theta(\log^2 m + n) &amp;\ m \ge n\\

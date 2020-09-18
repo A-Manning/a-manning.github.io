@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Ash Manning's Blog - Generalizing Biapplicatives</title>
         <link rel="stylesheet" href="../../css/default.css" />
+        <link rel="stylesheet" href="../../css/syntax.css" />
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
     </head>
@@ -38,8 +39,8 @@
 <span id="cb1-3"><a href="#cb1-3"></a><span class="ot">  pure ::</span> a <span class="ot">-&gt;</span> f a</span>
 <span id="cb1-4"><a href="#cb1-4"></a></span>
 <span id="cb1-5"><a href="#cb1-5"></a><span class="ot">  (&lt;*&gt;) ::</span> f (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f a <span class="ot">-&gt;</span> f b</span></code></pre></div>
-<p>Why are <code>pure</code> and <code>(&lt;*&gt;)</code> bundled together like this? Surely we could define a hierarchy, as with <code>Semigroup</code> and <code>Monoid</code>?</p>
-<p>The difference here is that we need <code>pure</code>, in order to define meaningful laws for <code>(&lt;*&gt;)</code>.</p>
+<p>Why are <code class="sourceCode haskell"><span class="fu">pure</span></code> and <code class="sourceCode haskell">(<span class="op">&lt;*&gt;</span>)</code> bundled together like this? Surely we could define a hierarchy, as with <code class="sourceCode haskell"><span class="dt">Semigroup</span></code> and <code>Monoid</code>?</p>
+<p>The difference here is that we need <code class="sourceCode haskell"><span class="fu">pure</span></code>, in order to define meaningful laws for <code class="sourceCode haskell">(<span class="op">&lt;*&gt;</span>)</code>.</p>
 <p>The applicative laws are as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">-- Identity law</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a><span class="fu">pure</span> <span class="fu">id</span> <span class="op">&lt;*&gt;</span> v <span class="ot">=</span> v</span>
@@ -59,13 +60,13 @@
 <span id="cb3-3"><a href="#cb3-3"></a><span class="ot">  bipure ::</span> a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> p a b</span>
 <span id="cb3-4"><a href="#cb3-4"></a></span>
 <span id="cb3-5"><a href="#cb3-5"></a><span class="ot">  (&lt;&lt;*&gt;&gt;) ::</span> p (a <span class="ot">-&gt;</span> b) (c <span class="ot">-&gt;</span> d) <span class="ot">-&gt;</span> p a c <span class="ot">-&gt;</span> p b d</span></code></pre></div>
-<p>Biapplicative functors are a generalization of applicative functors that support two type parameters, instead of one. Tuples are a familiar example of a type supporting a definition of <code>Biapplicative</code>.</p>
+<p>Biapplicative functors are a generalization of applicative functors that support two type parameters, instead of one. Tuples are a familiar example of a type supporting a definition of <code class="sourceCode haskell"><span class="dt">Biapplicative</span></code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">instance</span> <span class="dt">Biapplicative</span> (,) <span class="kw">where</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a></span>
 <span id="cb4-3"><a href="#cb4-3"></a>  bipure <span class="ot">=</span> (,)</span>
 <span id="cb4-4"><a href="#cb4-4"></a></span>
 <span id="cb4-5"><a href="#cb4-5"></a>  (f, g) <span class="op">&lt;&lt;*&gt;&gt;</span> (a, b) <span class="ot">=</span> (f a, g b)</span></code></pre></div>
-<p>What might be surprising is that it is <em>not</em> possible to define an instance of <code>Biapplicative</code> for <code>Either</code>.</p>
+<p>What might be surprising is that it is <em>not</em> possible to define an instance of <code class="sourceCode haskell"><span class="dt">Biapplicative</span></code> for <code class="sourceCode haskell"><span class="dt">Either</span></code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">instance</span> <span class="dt">Biapplicative</span> <span class="dt">Either</span> <span class="kw">where</span></span>
 <span id="cb5-2"><a href="#cb5-2"></a>  <span class="co">-- We could try this with `Right` instead;</span></span>
 <span id="cb5-3"><a href="#cb5-3"></a>  <span class="co">-- Since `Either` is symmetric, there is no difference.</span></span>
@@ -76,7 +77,7 @@
 <span id="cb5-8"><a href="#cb5-8"></a>  <span class="co">-- There is no way to define these cases</span></span>
 <span id="cb5-9"><a href="#cb5-9"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">Left</span> f) (<span class="dt">Right</span> y) <span class="ot">=</span></span>
 <span id="cb5-10"><a href="#cb5-10"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">Right</span> g) (<span class="dt">Left</span> x) <span class="ot">=</span></span></code></pre></div>
-<p>We can, however, define <code>(&lt;&lt;*&gt;&gt;)</code> on <code>Maybe (Either a b)</code>:</p>
+<p>We can, however, define <code class="sourceCode haskell">(<span class="op">&lt;&lt;*&gt;&gt;</span>)</code> on <code>Maybe (Either a b)</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1"></a>(<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">Just</span> (<span class="dt">Left</span> f)) (<span class="dt">Just</span> (<span class="dt">Left</span> x)) <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Left</span> (f x))</span>
 <span id="cb6-2"><a href="#cb6-2"></a>(<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">Just</span> (<span class="dt">Left</span> _)) _ <span class="ot">=</span> <span class="dt">Nothing</span></span>
 <span id="cb6-3"><a href="#cb6-3"></a>(<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">Just</span> (<span class="dt">Right</span> g)) (<span class="dt">Just</span> (<span class="dt">Right</span> y)) <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Right</span> (g y))</span>
@@ -86,7 +87,7 @@
 <div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1"></a>bipure <span class="ot">=</span> <span class="dt">Left</span> <span class="op">.</span> <span class="fu">const</span></span>
 <span id="cb7-2"><a href="#cb7-2"></a>bipure <span class="ot">=</span> <span class="dt">Right</span> <span class="op">.</span> <span class="fu">const</span></span>
 <span id="cb7-3"><a href="#cb7-3"></a>bipure <span class="ot">=</span> <span class="fu">const</span> (<span class="fu">const</span> <span class="dt">Nothing</span>)</span></code></pre></div>
-<p>At this point, it’s worth looking into the “Biapplicative laws”, which will tell us if we can define an instance <code>Biapplicative Maybe (Either a b)</code>, and perhaps resolve the choice of <code>bipure</code>. The biapplicative laws are fairly intuitive - they are almost the same as the applicative laws.</p>
+<p>At this point, it’s worth looking into the “Biapplicative laws”, which will tell us if we can define an instance <code class="sourceCode haskell"><span class="dt">Biapplicative</span> <span class="dt">Maybe</span> (<span class="dt">Either</span> a b)</code>, and perhaps resolve the choice of <code class="sourceCode haskell">bipure</code>. The biapplicative laws are fairly intuitive - they are almost the same as the applicative laws.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">-- Identity law</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a>bipure <span class="fu">id</span> <span class="fu">id</span> <span class="op">&lt;&lt;*&gt;&gt;</span> v <span class="ot">=</span> v</span>
 <span id="cb8-3"><a href="#cb8-3"></a></span>
@@ -98,16 +99,16 @@
 <span id="cb8-9"><a href="#cb8-9"></a></span>
 <span id="cb8-10"><a href="#cb8-10"></a><span class="co">-- Composition law</span></span>
 <span id="cb8-11"><a href="#cb8-11"></a>bipure (<span class="op">.</span>) (<span class="op">.</span>) <span class="op">&lt;&lt;*&gt;&gt;</span> u <span class="op">&lt;&lt;*&gt;&gt;</span> v <span class="op">&lt;&lt;*&gt;&gt;</span> w <span class="ot">=</span> u <span class="op">&lt;&lt;*&gt;&gt;</span> (v <span class="op">&lt;&lt;*&gt;&gt;</span> w)</span></code></pre></div>
-<p>At this point we can clearly see that no choice of <code>bipure</code> will satisfy the identity law or composition laws for <code>Maybe (Either a b)</code>.</p>
+<p>At this point we can clearly see that no choice of <code class="sourceCode haskell">bipure</code> will satisfy the identity law or composition laws for <code class="sourceCode haskell"><span class="dt">Maybe</span> (<span class="dt">Either</span> a b)</code>.</p>
 <h2 id="generalizing-biapplicative-functors">Generalizing Biapplicative Functors</h2>
-<p>The definition of <code>Applicative</code> includes <code>pure</code> so that we can state the applicative laws. For the same reason, the definition of <code>Biapplicative</code> includes <code>bipure</code>. But does it have to? What if we were to rethink <code>Biapplicative</code>, with an alternative to <code>bipure</code>?</p>
+<p>The definition of <code class="sourceCode haskell"><span class="dt">Applicative</span></code> includes <code class="sourceCode haskell"><span class="fu">pure</span></code> so that we can state the applicative laws. For the same reason, the definition of <code class="sourceCode haskell"><span class="dt">Biapplicative</span></code> includes <code class="sourceCode haskell">bipure</code>. But does it have to? What if we were to rethink <code class="sourceCode haskell"><span class="dt">Biapplicative</span></code>, with an alternative to <code>bipure</code>?</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">class</span> <span class="dt">Bifunctor</span> p <span class="ot">=&gt;</span> <span class="dt">Biapplicative</span> p <span class="kw">where</span></span>
 <span id="cb9-2"><a href="#cb9-2"></a></span>
 <span id="cb9-3"><a href="#cb9-3"></a><span class="ot">  pureL ::</span> a <span class="ot">-&gt;</span> p a b</span>
 <span id="cb9-4"><a href="#cb9-4"></a><span class="ot">  pureR ::</span> b <span class="ot">-&gt;</span> p a b</span>
 <span id="cb9-5"><a href="#cb9-5"></a></span>
 <span id="cb9-6"><a href="#cb9-6"></a><span class="ot">  (&lt;&lt;*&gt;&gt;) ::</span> p (a <span class="ot">-&gt;</span> b) (c <span class="ot">-&gt;</span> d) <span class="ot">-&gt;</span> p a c <span class="ot">-&gt;</span> p b d</span></code></pre></div>
-<p>This definition is much nicer to work with; The instance for <code>Maybe (Either a b)</code> is much as it was before:</p>
+<p>This definition is much nicer to work with; The instance for <code class="sourceCode haskell"><span class="dt">Maybe</span> (<span class="dt">Either</span> a b)</code> is much as it was before:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">instance</span> <span class="dt">Biapplicative</span> <span class="dt">Maybe</span> (<span class="dt">Either</span> a b) <span class="kw">where</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a></span>
 <span id="cb10-3"><a href="#cb10-3"></a>  pureL <span class="ot">=</span> <span class="dt">Just</span> <span class="op">.</span> <span class="dt">Left</span></span>
@@ -118,7 +119,7 @@
 <span id="cb10-8"><a href="#cb10-8"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">Just</span> (<span class="dt">Right</span> g)) (<span class="dt">Just</span> (<span class="dt">Right</span> y)) <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Right</span> (g y))</span>
 <span id="cb10-9"><a href="#cb10-9"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) (<span class="dt">Just</span> (<span class="dt">Right</span> _)) _                <span class="ot">=</span> <span class="dt">Nothing</span></span>
 <span id="cb10-10"><a href="#cb10-10"></a>  (<span class="op">&lt;&lt;*&gt;&gt;</span>) <span class="dt">Nothing</span> _                         <span class="ot">=</span> <span class="dt">Nothing</span></span></code></pre></div>
-<p>What about the laws for this definition? Since we have a left and right version of <code>pure</code> now, there are a few more laws:</p>
+<p>What about the laws for this definition? Since we have a left and right version of <code class="sourceCode haskell"><span class="fu">pure</span></code> now, there are a few more laws:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1"></a><span class="co">-- Identity laws</span></span>
 <span id="cb11-2"><a href="#cb11-2"></a>pureL <span class="fu">id</span> <span class="op">&lt;&lt;*&gt;&gt;</span> v <span class="ot">=</span> v</span>
 <span id="cb11-3"><a href="#cb11-3"></a>pureR <span class="fu">id</span> <span class="op">&lt;&lt;*&gt;&gt;</span> v <span class="ot">=</span> v</span>
@@ -134,7 +135,7 @@
 <span id="cb11-13"><a href="#cb11-13"></a><span class="co">-- Composition laws</span></span>
 <span id="cb11-14"><a href="#cb11-14"></a>pureL (<span class="op">.</span>) <span class="op">&lt;&lt;*&gt;&gt;</span> u <span class="op">&lt;&lt;*&gt;&gt;</span> v <span class="op">&lt;&lt;*&gt;&gt;</span> w <span class="ot">=</span> u <span class="op">&lt;&lt;*&gt;&gt;</span> (v <span class="op">&lt;&lt;*&gt;&gt;</span> w)</span>
 <span id="cb11-15"><a href="#cb11-15"></a>pureR (<span class="op">.</span>) <span class="op">&lt;&lt;*&gt;&gt;</span> u <span class="op">&lt;&lt;*&gt;&gt;</span> v <span class="op">&lt;&lt;*&gt;&gt;</span> w <span class="ot">=</span> u <span class="op">&lt;&lt;*&gt;&gt;</span> (v <span class="op">&lt;&lt;*&gt;&gt;</span> w)</span></code></pre></div>
-<p>Unfortunately our instance still won’t satisfy the identity laws. What we really need is two versions of <code>(&lt;&lt;*&gt;&gt;)</code>, in the same vein as how <code>Bifunctor</code> has two versions of <code>Functor</code>’s <code>&lt;$&gt;</code>.</p>
+<p>Unfortunately our instance still won’t satisfy the identity laws. What we really need is two versions of <code class="sourceCode haskell">(<span class="op">&lt;&lt;*&gt;&gt;</span>)</code>, in the same vein as how <code class="sourceCode haskell"><span class="dt">Bifunctor</span></code> has two versions of <code>Functor</code>’s <code class="sourceCode haskell"><span class="op">&lt;$&gt;</span></code>.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">class</span> <span class="dt">Bifunctor</span> p <span class="ot">=&gt;</span> <span class="dt">Biapplicative</span> p <span class="kw">where</span></span>
 <span id="cb12-2"><a href="#cb12-2"></a></span>
 <span id="cb12-3"><a href="#cb12-3"></a><span class="ot">  pureL ::</span> a <span class="ot">-&gt;</span> p a b</span>
@@ -185,8 +186,8 @@
 <span id="cb14-15"><a href="#cb14-15"></a>  applyR (<span class="dt">Just</span> (<span class="dt">Left</span> f)) (<span class="dt">Just</span> (<span class="dt">Left</span> x))   <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Left</span> (f x))</span>
 <span id="cb14-16"><a href="#cb14-16"></a>  applyR (<span class="dt">Just</span> (<span class="dt">Left</span> _)) _                 <span class="ot">=</span> <span class="dt">Nothing</span></span>
 <span id="cb14-17"><a href="#cb14-17"></a>  applyR <span class="dt">Nothing</span> _                         <span class="ot">=</span> <span class="dt">Nothing</span></span></code></pre></div>
-<p>There’s still a problem. Because we’ve replaced <code>bipure</code> with <code>pureL</code> and <code>pureR</code>, we can no longer define an instance of <code>Biapplicative (,)</code>.</p>
-<p>I think that this is sufficiently motivating to split our <code>Biapplicative</code> definition into three parts.</p>
+<p>There’s still a problem. Because we’ve replaced <code class="sourceCode haskell">bipure</code> with <code class="sourceCode haskell">pureL</code> and <code class="sourceCode haskell">pureR</code>, we can no longer define an instance of <code class="sourceCode haskell"><span class="dt">Biapplicative</span> (,)</code>.</p>
+<p>I think that this is sufficiently motivating to split our <code class="sourceCode haskell"><span class="dt">Biapplicative</span></code> definition into three parts.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">class</span> <span class="dt">Bifunctor</span> p <span class="ot">=&gt;</span> <span class="dt">Biapplicative</span> p <span class="kw">where</span></span>
 <span id="cb15-2"><a href="#cb15-2"></a></span>
 <span id="cb15-3"><a href="#cb15-3"></a><span class="ot">  applyL ::</span> p (a <span class="ot">-&gt;</span> b) (c <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> p a c <span class="ot">-&gt;</span> p b c</span>
@@ -204,8 +205,8 @@
 <span id="cb15-15"><a href="#cb15-15"></a></span>
 <span id="cb15-16"><a href="#cb15-16"></a><span class="kw">class</span> <span class="dt">Biapplicative</span> p <span class="ot">=&gt;</span> <span class="dt">Biapplicative2</span> p <span class="kw">where</span></span>
 <span id="cb15-17"><a href="#cb15-17"></a><span class="ot">  bipure ::</span> a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> p a b</span></code></pre></div>
-<p>The laws for <code>Biapplicative1</code> and <code>Biapplicative2</code> are as we saw above, using <code>pureL</code> and <code>pureR</code> to describe the <code>Biapplicative1</code> laws, and <code>bipure</code> to describe the <code>Biapplicative2</code> laws.</p>
-<p>Indeed, it is possible for a biapplicative functor to have instances of both <code>Biapplicative1</code> and <code>Biapplicative2</code>.</p>
+<p>The laws for <code class="sourceCode haskell"><span class="dt">Biapplicative1</span></code> and <code class="sourceCode haskell"><span class="dt">Biapplicative2</span></code> are as we saw above, using <code class="sourceCode haskell">pureL</code> and <code class="sourceCode haskell">pureR</code> to describe the <code class="sourceCode haskell"><span class="dt">Biapplicative1</span></code> laws, and <code class="sourceCode haskell">bipure</code> to describe the <code class="sourceCode haskell"><span class="dt">Biapplicative2</span></code> laws.</p>
+<p>Indeed, it is possible for a biapplicative functor to have instances of both <code class="sourceCode haskell"><span class="dt">Biapplicative1</span></code> and <code class="sourceCode haskell"><span class="dt">Biapplicative2</span></code>.</p>
 <p>One such example is given below:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb16-1"><a href="#cb16-1"></a><span class="kw">data</span> <span class="dt">EitherBothNothing</span> a b <span class="ot">=</span> <span class="dt">B</span> a b <span class="op">|</span> <span class="dt">L</span> a <span class="op">|</span> <span class="dt">R</span> b <span class="op">|</span> <span class="dt">N</span></span>
 <span id="cb16-2"><a href="#cb16-2"></a></span>
