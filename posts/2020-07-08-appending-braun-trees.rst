@@ -2,6 +2,8 @@
 title: Appending Braun Trees
 ---
 
+.. role:: haskell(code)
+   :language: haskell
 
 =====================
 Appending Braun Trees
@@ -61,7 +63,7 @@ This algorithm is quite clearly
 Getting the Odd- and Even-Indexed Elements of a Braun Tree
 ----------------------------------------------------------
 
-These algorithms are nothing new; they are both components of the algorithm used for `cons`.
+These algorithms are nothing new; they are both components of the algorithm used for :haskell:`cons`.
 
 .. code-block:: haskell
 
@@ -114,12 +116,12 @@ This leads us to the following algorithm:
   append x = append' (size x) x
 
 ----------------------------------
-Algorithmic Complexity of `append`
+Algorithmic Complexity of :haskell:`append`
 ----------------------------------
 
 To make this a bit easier to reason about, we will assume that :math:`m` and :math:`n` are of the forms :math:`2^a` and :math:`2^b` respectively.
 
-We can represent the recurrence equation for the complexity of `append'`, :math:`T'(a, b)` as
+We can represent the recurrence equation for the complexity of :haskell:`append'`, :math:`T'(a, b)` as
 
 .. math::
 
@@ -142,7 +144,7 @@ We can expand :math:`c` to write this as
       (b+2)(2^a-1) - a2^a &\ b \ge a
     \end{cases}
 
-We can thereby conclude that the complexity of `append'` is as follows:
+We can thereby conclude that the complexity of :haskell:`append'` is as follows:
 
 .. math::
   \begin{cases}
@@ -150,9 +152,9 @@ We can thereby conclude that the complexity of `append'` is as follows:
       \Theta(m \log(\frac{n}{m}) + m) &\ n > m
   \end{cases}
 
-Finally, we can consider that the complexity of `append` is as for `append'`, but with an additional :math:`\log^2 m` to compute :math:`m`.
+Finally, we can consider that the complexity of :haskell:`append` is as for :haskell:`append'`, but with an additional :math:`\log^2 m` to compute :math:`m`.
 
-Therefore, the complexity of my `append` algorithm is
+Therefore, the complexity of my :haskell:`append` algorithm is
 
 .. math::
   \begin{cases}

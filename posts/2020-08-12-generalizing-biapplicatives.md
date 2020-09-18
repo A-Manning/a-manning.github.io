@@ -17,11 +17,11 @@ class Functor f => Applicative f where
   (<*>) :: f (a -> b) -> f a -> f b
 ```
 
-Why are `pure` and `(<*>)` bundled together like this?
-Surely we could define a hierarchy, as with `Semigroup` and `Monoid`?
+Why are `pure`{.haskell} and `(<*>)`{.haskell} bundled together like this?
+Surely we could define a hierarchy, as with `Semigroup`{.haskell} and `Monoid`?
 
-The difference here is that we need `pure`,
-in order to define meaningful laws for `(<*>)`.
+The difference here is that we need `pure`{.haskell},
+in order to define meaningful laws for `(<*>)`{.haskell}.
 
 The applicative laws are as follows:
 
@@ -52,7 +52,7 @@ class Bifunctor p => Biapplicative p where
 ```
 
 Biapplicative functors are a generalization of applicative functors that support two type parameters, instead of one.
-Tuples are a familiar example of a type supporting a definition of `Biapplicative`.
+Tuples are a familiar example of a type supporting a definition of `Biapplicative`{.haskell}.
 
 ```haskell
 instance Biapplicative (,) where
@@ -62,7 +62,7 @@ instance Biapplicative (,) where
   (f, g) <<*>> (a, b) = (f a, g b)
 ```
 
-What might be surprising is that it is *not* possible to define an instance of `Biapplicative` for `Either`.
+What might be surprising is that it is *not* possible to define an instance of `Biapplicative`{.haskell} for `Either`{.haskell}.
 
 ```haskell
 instance Biapplicative Either where
@@ -77,7 +77,7 @@ instance Biapplicative Either where
   (<<*>>) (Right g) (Left x) =
 ```
 
-We can, however, define `(<<*>>)` on `Maybe (Either a b)`:
+We can, however, define `(<<*>>)`{.haskell} on `Maybe (Either a b)`:
 
 ```haskell
 (<<*>>) (Just (Left f)) (Just (Left x)) = Just (Left (f x))
@@ -95,8 +95,8 @@ bipure = const (const Nothing)
 ```
 
 At this point, it's worth looking into the "Biapplicative laws",
-which will tell us if we can define an instance `Biapplicative Maybe (Either a b)`,
-and perhaps resolve the choice of `bipure`.
+which will tell us if we can define an instance `Biapplicative Maybe (Either a b)`{.haskell},
+and perhaps resolve the choice of `bipure`{.haskell}.
 The biapplicative laws are fairly intuitive -
 they are almost the same as the applicative laws.
 
@@ -114,13 +114,13 @@ u <<*>> bipure x y = bipure ($ x) ($ y) <<*>> u
 bipure (.) (.) <<*>> u <<*>> v <<*>> w = u <<*>> (v <<*>> w)
 ```
 
-At this point we can clearly see that no choice of `bipure` will satisfy the identity law or composition laws for `Maybe (Either a b)`.
+At this point we can clearly see that no choice of `bipure`{.haskell} will satisfy the identity law or composition laws for `Maybe (Either a b)`{.haskell}.
 
 ## Generalizing Biapplicative Functors
 
-The definition of `Applicative` includes `pure` so that we can state the applicative laws.
-For the same reason, the definition of `Biapplicative` includes `bipure`.
-But does it have to? What if we were to rethink `Biapplicative`, with an alternative to `bipure`?
+The definition of `Applicative`{.haskell} includes `pure`{.haskell} so that we can state the applicative laws.
+For the same reason, the definition of `Biapplicative`{.haskell} includes `bipure`{.haskell}.
+But does it have to? What if we were to rethink `Biapplicative`{.haskell}, with an alternative to `bipure`?
 
 ```haskell
 class Bifunctor p => Biapplicative p where
@@ -132,7 +132,7 @@ class Bifunctor p => Biapplicative p where
 ```
 
 This definition is much nicer to work with;
-The instance for `Maybe (Either a b)` is much as it was before:
+The instance for `Maybe (Either a b)`{.haskell} is much as it was before:
 
 ```haskell
 instance Biapplicative Maybe (Either a b) where
@@ -148,7 +148,7 @@ instance Biapplicative Maybe (Either a b) where
 ```
 
 What about the laws for this definition?
-Since we have a left and right version of `pure` now,
+Since we have a left and right version of `pure`{.haskell} now,
 there are a few more laws:
 
 ```haskell
@@ -170,7 +170,7 @@ pureR (.) <<*>> u <<*>> v <<*>> w = u <<*>> (v <<*>> w)
 ```
 
 Unfortunately our instance still won't satisfy the identity laws.
-What we really need is two versions of `(<<*>>)`, in the same vein as how `Bifunctor` has two versions of `Functor`'s `<$>`.
+What we really need is two versions of `(<<*>>)`{.haskell}, in the same vein as how `Bifunctor`{.haskell} has two versions of `Functor`'s `<$>`{.haskell}.
 
 ```haskell
 class Bifunctor p => Biapplicative p where
@@ -233,9 +233,9 @@ instance Biapplicative Maybe (Either a b) where
   applyR Nothing _                         = Nothing
 ```
 
-There's still a problem. Because we've replaced `bipure` with `pureL` and `pureR`, we can no longer define an instance of `Biapplicative (,)`.
+There's still a problem. Because we've replaced `bipure`{.haskell} with `pureL`{.haskell} and `pureR`{.haskell}, we can no longer define an instance of `Biapplicative (,)`{.haskell}.
 
-I think that this is sufficiently motivating to split our `Biapplicative` definition into three parts.
+I think that this is sufficiently motivating to split our `Biapplicative`{.haskell} definition into three parts.
 
 ```haskell
 class Bifunctor p => Biapplicative p where
@@ -257,11 +257,11 @@ class Biapplicative p => Biapplicative2 p where
   bipure :: a -> b -> p a b
 ```
 
-The laws for `Biapplicative1` and `Biapplicative2` are as we saw above,
-using `pureL` and `pureR` to describe the `Biapplicative1` laws,
-and `bipure` to describe the `Biapplicative2` laws.
+The laws for `Biapplicative1`{.haskell} and `Biapplicative2`{.haskell} are as we saw above,
+using `pureL`{.haskell} and `pureR`{.haskell} to describe the `Biapplicative1`{.haskell} laws,
+and `bipure`{.haskell} to describe the `Biapplicative2`{.haskell} laws.
 
-Indeed, it is possible for a biapplicative functor to have instances of both `Biapplicative1` and `Biapplicative2`.
+Indeed, it is possible for a biapplicative functor to have instances of both `Biapplicative1`{.haskell} and `Biapplicative2`{.haskell}.
 
 One such example is given below:
 ```haskell
